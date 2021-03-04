@@ -1,6 +1,7 @@
 # OutOfFocusQRReader
 
 OutOfFocusQRReader is a library for reading QR codes from out-of-focus images on Android.
+
 This library use OpenCV library.
 
 # Install
@@ -8,6 +9,7 @@ This library use OpenCV library.
 ## Download OpenCV
 
 Go to the official OpenCV web page and download the latest OpenCV Android library.
+
 https://opencv.org/releases/
 
 ## Extract zip and move sdk folder
@@ -45,7 +47,9 @@ dependencies {
 
 ## Create ImageData
 
+```
 val image = ImageData(image_byte_array, format, width, height)
+```
 
 ## Detect rect where QR exists
 
