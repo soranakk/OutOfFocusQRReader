@@ -1,3 +1,2 @@
-include ':OutOfFocusQRReader:reader'
-include ':OutOfFocusQRReader:model'
-include ':OutOfFocusQRReader:opencv_sdk:sdk'
+include ':oofqrreader'
+include ':opencv_sdk:sdk'
