@@ -1,8 +1,6 @@
 package com.github.soranakk.oofqrreader.reader
 
-import com.github.soranakk.oofqrreader.decorder.QRCordDecorder
-import com.github.soranakk.oofqrreader.extension.clipRect
-import com.github.soranakk.oofqrreader.extension.convertGray2Bitmap
+import com.github.soranakk.oofqrreader.decoder.QRCodeDecoder
 import com.github.soranakk.oofqrreader.filter.GaussianThresholdFilter
 import com.github.soranakk.oofqrreader.filter.ImageFilter
 import com.github.soranakk.oofqrreader.filter.OverexposureFilter
@@ -14,9 +12,9 @@ import org.opencv.core.Mat
 import org.opencv.core.Rect
 
 class MultiFilterQRCodeReader(
-        private val decorder: QRCordDecorder,
-        filters: List<ImageFilter> = listOf(),
-        readerSettings: ReaderSettings = ReaderSettings()) : QRCodeReader {
+    private val decorder: QRCodeDecoder,
+    filters: List<ImageFilter> = listOf(),
+    readerSettings: ReaderSettings = ReaderSettings()) : QRCodeReader {
 
     data class ReaderSettings(
             val useDefaultFilter: Boolean = true
@@ -52,7 +50,7 @@ class MultiFilterQRCodeReader(
         return filters.asSequence()
                 .map { filter -> filter.filter(targetImage) }
                 .map { filteredImage -> filteredImage.convertGray2Bitmap() }
-                .map { filteredBitmap -> decorder.decord(filteredBitmap) }
+                .map { filteredBitmap -> decorder.decode(filteredBitmap) }
                 .find { !it.isNullOrEmpty() }
                 .also { targetImage.release() }
     }

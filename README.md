@@ -58,12 +58,12 @@ val detector = QRCodeDetector()
 val rectList = detector.detectRectWhereQRExists(image)
 ```
 
-## Create QRCordDecorder
+## Create QRCodeDecoder
 
 Example using [ZXing](https://github.com/zxing/zxing):
 
 ```kotlin
-class ZxingDecorder : QRCordDecorder {
+class ZxingDecoder : QRCodeDecoder {
     private val qrCodeReader = MultiFormatReader().apply {
         val hints = hashMapOf(
                 Pair(DecodeHintType.TRY_HARDER, false),
@@ -71,7 +71,7 @@ class ZxingDecorder : QRCordDecorder {
         setHints(hints)
     }
 
-    override fun decord(bitmap: Bitmap): String? {
+    override fun decode(bitmap: Bitmap): String? {
         val binaryBitmap = BinaryBitmap(GlobalHistogramBinarizer(convertLuminanceSource(bitmap)))
         return try {
             qrCodeReader.decodeWithState(binaryBitmap).text
@@ -86,12 +86,12 @@ class ZxingDecorder : QRCordDecorder {
         return RGBLuminanceSource(bitmap.width, bitmap.height, pixels)
     }
 }
-val zxingDecorder = ZxingDecorder()
+val zxingDecoder = ZxingDecoder()
 ```
 
 ## Read QR code
 
-```
-val qrReader = MultiFilterQRCodeReader(zxingDecorder)
-val result = qrReader.readQRCord(image, rectList)
+```kotlin
+val qrReader = MultiFilterQRCodeReader(zxingDecoder)
+val result = qrReader.readQRCode(image, rectList)
 ```
