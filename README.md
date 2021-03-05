@@ -75,7 +75,6 @@ class ZxingDecorder : QRCordDecorder {
         return try {
             qrCodeReader.decodeWithState(binaryBitmap).text
         } catch (e: Exception) {
-            Timber.d(e, "Failed to detect.")
             null
         }
     }
