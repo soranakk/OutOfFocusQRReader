@@ -1,8 +1,10 @@
 # OutOfFocusQRReader
 
-OutOfFocusQRReader is a library for reading QR Code[^qrcode] from out-of-focus images on Android.
+OutOfFocusQRReader is a library for reading QR Code from out-of-focus images on Android.
 
 This library uses the OpenCV library.
+
+*“QR Code” is a registered trademark of DENSO WAVE INCORPORATED.*
 
 # Install
 
@@ -95,5 +97,3 @@ val zxingDecoder = ZxingDecoder()
 val qrReader = MultiFilterQRCodeReader(zxingDecoder)
 val result = qrReader.readQRCode(image, rectList)
 ```
-
-[^qrcode]: “QR Code” is a registered trademark of DENSO WAVE INCORPORATED.
