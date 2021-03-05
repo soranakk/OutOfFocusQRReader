@@ -2,34 +2,34 @@
 
 OutOfFocusQRReader is a library for reading QR codes from out-of-focus images on Android.
 
-This library use OpenCV library.
+This library uses the OpenCV library.
 
 # Install
 
 ## Download OpenCV
 
-Go to the official OpenCV web page and download the latest OpenCV Android library.
+Download the latest version of the OpenCV Android library from the official OpenCV web page.
 
 https://opencv.org/releases/
 
-## Extract zip and move sdk folder
+## Extract zip and move SDK folder
 
-Extract the downloaded zip and move sdk folder to your project root folder.
+Extract the files the downloaded zip file and move the SDK folder to your project root folder.
 
-## Install OpenCV sdk
+## Install OpenCV SDK
 
-Edit settings.gradle and sync gradle.
+Edit the `settings.gradle` file in your project and sync your project:
 
-```
+```gradle
 // add
 include ':sdk'
 ```
 
 ## Install OutOfFocusQRReader
 
-Edit build.gradle of your app.
+Edit the `build.gradle` file in your project:
 
-```
+```gradle
 repositories {
     mavenCentral()
 }
@@ -43,25 +43,26 @@ dependencies {
 }
 ```
 
-# How to use
+# Usage
 
 ## Create ImageData
 
-```
+```kotlin
 val image = ImageData(image_byte_array, format, width, height)
 ```
 
-## Detect rect where QR exists
+## Detect the rect where QR exists
 
-```
+```kotlin
 val detector = QRCodeDetector()
 val rectList = detector.detectRectWhereQRExists(image)
 ```
 
 ## Create QRCordDecorder
 
-for example use zxing.
-```
+Example using [ZXing](https://github.com/zxing/zxing):
+
+```kotlin
 class ZxingDecorder : QRCordDecorder {
     private val qrCodeReader = MultiFormatReader().apply {
         val hints = hashMapOf(
