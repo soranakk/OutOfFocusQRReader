@@ -73,7 +73,8 @@ class ZxingDecoder : QRCodeDecoder {
         setHints(hints)
     }
 
-    override fun decode(bitmap: Bitmap): String? {
+    override fun decode(grayImage: Mat): String? {
+        val bitmap = grayImage.convertGray2Bitmap()
         val binaryBitmap = BinaryBitmap(GlobalHistogramBinarizer(convertLuminanceSource(bitmap)))
         return try {
             qrCodeReader.decodeWithState(binaryBitmap).text
@@ -86,6 +87,16 @@ class ZxingDecoder : QRCodeDecoder {
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
         return RGBLuminanceSource(bitmap.width, bitmap.height, pixels)
+    }
+
+    private fun Mat.convertGray2Bitmap(): Bitmap {
+        val bitmap = Bitmap.createBitmap(this.width(), this.height(), Bitmap.Config.ARGB_8888)
+        val rgba = Mat()
+        Imgproc.cvtColor(this, rgba, Imgproc.COLOR_GRAY2RGBA)
+        Utils.matToBitmap(rgba, bitmap)
+        rgba.release()
+        this.release()
+        return bitmap
     }
 }
 val zxingDecoder = ZxingDecoder()
