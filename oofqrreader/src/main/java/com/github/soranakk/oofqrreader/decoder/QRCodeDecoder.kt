@@ -1,7 +1,7 @@
 package com.github.soranakk.oofqrreader.decoder
 
-import android.graphics.Bitmap
+import org.opencv.core.Mat
 
 interface QRCodeDecoder {
-    fun decode(bitmap: Bitmap): String?
+    fun decode(grayImage: Mat): String?
 }

@@ -4,9 +4,9 @@ import com.github.soranakk.oofqrreader.model.ImageData
 import org.opencv.core.Rect
 
 interface QRCodeReader {
-    fun readQRCord(image: ImageData): String?
+    fun readQRCode(image: ImageData): String?
 
-    fun readQRCord(image: ImageData, rect: Rect): String?
+    fun readQRCode(image: ImageData, rect: Rect): String?
 
-    fun readQRCord(image: ImageData, rectList: Iterable<Rect>): String?
+    fun readQRCode(image: ImageData, rectList: Iterable<Rect>): String?
 }

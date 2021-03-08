@@ -1,7 +1,5 @@
 package com.github.soranakk.oofqrreader.extension
 
-import android.graphics.Bitmap
-import org.opencv.android.Utils
 import org.opencv.core.Core
 import org.opencv.core.Mat
 import org.opencv.core.MatOfPoint
@@ -12,16 +10,6 @@ import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 
 fun Mat.clipRect(rect: Rect, autoRelease: Boolean = true): Mat = Mat(this, rect).also { if (autoRelease) this.release() }
-
-fun Mat.convertGray2Bitmap(autoRelease: Boolean = true): Bitmap {
-    val bitmap = Bitmap.createBitmap(this.width(), this.height(), Bitmap.Config.ARGB_8888)
-    val rgba = Mat()
-    Imgproc.cvtColor(this, rgba, Imgproc.COLOR_GRAY2RGBA)
-    Utils.matToBitmap(rgba, bitmap)
-    rgba.release()
-    if (autoRelease) this.release()
-    return bitmap
-}
 
 fun Mat.erode(size: Size, iterations: Int = 10, autoRelease: Boolean = true): Mat {
     val result = Mat(this.height(), this.width(), this.type())

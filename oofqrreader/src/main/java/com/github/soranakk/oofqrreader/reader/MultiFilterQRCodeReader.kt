@@ -1,6 +1,7 @@
 package com.github.soranakk.oofqrreader.reader
 
 import com.github.soranakk.oofqrreader.decoder.QRCodeDecoder
+import com.github.soranakk.oofqrreader.extension.clipRect
 import com.github.soranakk.oofqrreader.filter.GaussianThresholdFilter
 import com.github.soranakk.oofqrreader.filter.ImageFilter
 import com.github.soranakk.oofqrreader.filter.OverexposureFilter
@@ -12,9 +13,9 @@ import org.opencv.core.Mat
 import org.opencv.core.Rect
 
 class MultiFilterQRCodeReader(
-    private val decorder: QRCodeDecoder,
-    filters: List<ImageFilter> = listOf(),
-    readerSettings: ReaderSettings = ReaderSettings()) : QRCodeReader {
+        private val decoder: QRCodeDecoder,
+        filters: List<ImageFilter> = listOf(),
+        readerSettings: ReaderSettings = ReaderSettings()) : QRCodeReader {
 
     data class ReaderSettings(
             val useDefaultFilter: Boolean = true
@@ -35,11 +36,11 @@ class MultiFilterQRCodeReader(
                         ThresholdOtsuFilter()))
             }
 
-    override fun readQRCord(image: ImageData) = readQRCord(image, Rect(0, 0, image.width, image.height))
+    override fun readQRCode(image: ImageData) = readQRCode(image, Rect(0, 0, image.width, image.height))
 
-    override fun readQRCord(image: ImageData, rect: Rect) = readQRCord(image, listOf(rect))
+    override fun readQRCode(image: ImageData, rect: Rect) = readQRCode(image, listOf(rect))
 
-    override fun readQRCord(image: ImageData, rectList: Iterable<Rect>): String? {
+    override fun readQRCode(image: ImageData, rectList: Iterable<Rect>): String? {
         return rectList.asSequence()
                 .map { rect -> read(image, rect) }
                 .find { !it.isNullOrEmpty() }
@@ -49,8 +50,7 @@ class MultiFilterQRCodeReader(
         val targetImage = MatUtil.convertYuvToGray(image).clipRect(rect)
         return filters.asSequence()
                 .map { filter -> filter.filter(targetImage) }
-                .map { filteredImage -> filteredImage.convertGray2Bitmap() }
-                .map { filteredBitmap -> decorder.decode(filteredBitmap) }
+                .map { filteredImage -> decoder.decode(filteredImage) }
                 .find { !it.isNullOrEmpty() }
                 .also { targetImage.release() }
     }
