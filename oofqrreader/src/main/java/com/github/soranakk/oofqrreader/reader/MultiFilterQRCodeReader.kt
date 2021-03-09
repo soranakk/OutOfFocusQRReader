@@ -47,7 +47,7 @@ class MultiFilterQRCodeReader(
     }
 
     private fun read(image: ImageData, rect: Rect): String? {
-        val targetImage = MatUtil.convertYuvToGray(image).clipRect(rect)
+        val targetImage = MatUtil.convertImageDataToGray(image).clipRect(rect)
         return filters.asSequence()
                 .map { filter -> filter.filter(targetImage) }
                 .map { filteredImage -> decoder.decode(filteredImage) }

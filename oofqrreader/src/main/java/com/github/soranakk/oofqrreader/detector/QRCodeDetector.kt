@@ -25,7 +25,7 @@ class QRCodeDetector(private val settings: DetectionSettings = DetectionSettings
 
     fun detectRectWhereQRExists(image: ImageData): List<Rect> {
         val imageSize = Size(image.width.toDouble(), image.height.toDouble())
-        return MatUtil.convertYuvToGray(image)
+        return MatUtil.convertImageDataToGray(image)
                 .thresholdOTSU()
                 .erode(Size(erodeSizeWidth, erodeSizeHeight))
                 .findContours()
