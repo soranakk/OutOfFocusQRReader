@@ -2,6 +2,7 @@ package com.github.soranakk.oofqrreader.model
 
 data class ImageData(
         val data: ByteArray,
+        val format: ImageFormat,
         val width: Int,
         val height: Int
 ) {
@@ -23,5 +24,11 @@ data class ImageData(
         result = 31 * result + width
         result = 31 * result + height
         return result
+    }
+
+    enum class ImageFormat {
+        YUV,
+        ARGB_8888,
+        GRAY
     }
 }
