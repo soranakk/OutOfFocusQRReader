@@ -1,2 +1,3 @@
+include ':image-converter-android-camera'
 include ':oofqrreader'
 include ':opencv_sdk:sdk'
