@@ -29,6 +29,7 @@ data class ImageData(
     enum class ImageFormat {
         YUV,
         ARGB_8888,
+        RGB_888,
         GRAY
     }
 }
