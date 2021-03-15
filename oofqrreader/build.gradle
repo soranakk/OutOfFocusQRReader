@@ -1,17 +1,19 @@
+import dependencies.Deps
+import dependencies.Versions
+
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion Versions.targetSdk
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 30
-        versionName "0.0.1"
+        minSdkVersion Versions.minSdk
+        targetSdkVersion Versions.targetSdk
+        versionName version
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -22,19 +24,16 @@ android {
         }
     }
 
-    lintOptions {
-        abortOnError false
+    kotlinOptions {
+        jvmTarget = '1.8'
+        freeCompilerArgs += "-Xexplicit-api=strict"
     }
 }
 
 dependencies {
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compileOnly project(':opencv_sdk:sdk')
 
-    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    compileOnly Deps.Kotlin.stdlib
 }
 
 apply from: "${project.rootDir}/publish.gradle"

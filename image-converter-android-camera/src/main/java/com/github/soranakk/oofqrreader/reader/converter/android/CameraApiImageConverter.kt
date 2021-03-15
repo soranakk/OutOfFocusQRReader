@@ -1,9 +1,9 @@
-package com.github.soranakk.qrcodereader.converter
+package com.github.soranakk.oofqrreader.reader.converter.android
 
 import com.github.soranakk.oofqrreader.model.ImageData
 
-class CameraApiImageConverter {
-    fun convertImage(data: ByteArray, width: Int, height: Int): ImageData {
+public class CameraApiImageConverter {
+    public fun convertImage(data: ByteArray, width: Int, height: Int): ImageData {
         return ImageData(
                 data = data.copyOf(width * height),
                 format = ImageData.ImageFormat.GRAY,

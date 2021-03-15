@@ -1,19 +1,19 @@
+import dependencies.Deps
+import dependencies.Versions
+
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    compileSdkVersion Versions.targetSdk
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0.0"
+        minSdkVersion Versions.minSdk
+        targetSdkVersion Versions.targetSdk
+        versionName version
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -23,29 +23,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
-    }
-    lintOptions {
-        abortOnError false
+        freeCompilerArgs += "-Xexplicit-api=strict"
     }
 }
 
 dependencies {
     api project(':oofqrreader')
-
     compileOnly project(':opencv_sdk:sdk')
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compileOnly "com.google.zxing:core:3.4.1"
-    compileOnly 'androidx.core:core-ktx:1.3.2'
-
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    
+    implementation Deps.AndroidX.coreKtx
+    implementation Deps.zxing
 }
 
 apply from: "${project.rootDir}/publish.gradle"

@@ -1,3 +1,3 @@
 package com.github.soranakk.oofqrreader.filter
 
-class StrongOverexposureFilter : ThresholdFilter(250.0)
+public class StrongOverexposureFilter : ThresholdFilter(250.0)

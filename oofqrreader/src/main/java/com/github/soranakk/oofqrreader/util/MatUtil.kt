@@ -6,7 +6,7 @@ import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 import java.nio.ByteBuffer
 
-object MatUtil {
+internal object MatUtil {
 
     fun convertImageDataToGray(image: ImageData): Mat {
         return when (image.format) {

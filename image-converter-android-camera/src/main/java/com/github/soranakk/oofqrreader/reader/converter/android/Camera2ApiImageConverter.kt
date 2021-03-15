@@ -1,4 +1,4 @@
-package com.github.soranakk.qrcodereader.converter
+package com.github.soranakk.oofqrreader.reader.converter.android
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,8 +10,8 @@ import com.github.soranakk.oofqrreader.model.ImageData
 import java.nio.ByteBuffer
 
 @RequiresApi(Build.VERSION_CODES.KITKAT)
-class Camera2ApiImageConverter {
-    fun convertImage(image: Image): ImageData {
+public class Camera2ApiImageConverter {
+    public fun convertImage(image: Image): ImageData {
         return when (image.format) {
             ImageFormat.JPEG,
             ImageFormat.HEIC -> convertCompressedDataToImageData(image)

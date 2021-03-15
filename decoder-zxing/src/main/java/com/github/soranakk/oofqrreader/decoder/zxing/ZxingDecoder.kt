@@ -1,6 +1,7 @@
-package com.github.soranakk.oofqrreader.decoder
+package com.github.soranakk.oofqrreader.decoder.zxing
 
 import android.graphics.Bitmap
+import com.github.soranakk.oofqrreader.decoder.QRCodeDecoder
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType
@@ -12,7 +13,7 @@ import org.opencv.android.Utils
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 
-class ZxingDecoder : QRCodeDecoder {
+public class ZxingDecoder : QRCodeDecoder {
 
     private val qrCodeReader = MultiFormatReader().apply {
         val hints = hashMapOf(
