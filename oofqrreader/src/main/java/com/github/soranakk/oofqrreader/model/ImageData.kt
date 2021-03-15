@@ -1,6 +1,6 @@
 package com.github.soranakk.oofqrreader.model
 
-data class ImageData(
+public data class ImageData(
         val data: ByteArray,
         val format: ImageFormat,
         val width: Int,
@@ -26,7 +26,7 @@ data class ImageData(
         return result
     }
 
-    enum class ImageFormat {
+    public enum class ImageFormat {
         YUV,
         ARGB_8888,
         RGB_888,

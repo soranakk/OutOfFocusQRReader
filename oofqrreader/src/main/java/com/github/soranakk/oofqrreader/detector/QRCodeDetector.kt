@@ -10,20 +10,20 @@ import org.opencv.core.Rect
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 
-class QRCodeDetector(private val settings: DetectionSettings = DetectionSettings()) {
+public class QRCodeDetector(private val settings: DetectionSettings = DetectionSettings()) {
 
-    companion object {
+    private companion object {
         private const val erodeSizeWidth = 5.0
         private const val erodeSizeHeight = 5.0
     }
 
-    data class DetectionSettings(
+    public data class DetectionSettings(
             val includeFullScreen: Boolean = false,
             val minSizeRate: Double = 0.01,
             val maxSizeRate: Double = 1.0
     )
 
-    fun detectRectWhereQRExists(image: ImageData): List<Rect> {
+    public fun detectRectWhereQRExists(image: ImageData): List<Rect> {
         val imageSize = Size(image.width.toDouble(), image.height.toDouble())
         return MatUtil.convertImageDataToGray(image)
                 .thresholdOTSU()

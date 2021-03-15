@@ -12,12 +12,12 @@ import com.github.soranakk.oofqrreader.util.MatUtil
 import org.opencv.core.Mat
 import org.opencv.core.Rect
 
-class MultiFilterQRCodeReader(
+public class MultiFilterQRCodeReader(
         private val decoder: QRCodeDecoder,
         filters: List<ImageFilter> = listOf(),
         readerSettings: ReaderSettings = ReaderSettings()) : QRCodeReader {
 
-    data class ReaderSettings(
+    public data class ReaderSettings(
             val useDefaultFilter: Boolean = true
     )
 
@@ -36,9 +36,9 @@ class MultiFilterQRCodeReader(
                         ThresholdOtsuFilter()))
             }
 
-    override fun readQRCode(image: ImageData) = readQRCode(image, Rect(0, 0, image.width, image.height))
+    override fun readQRCode(image: ImageData): String? = readQRCode(image, Rect(0, 0, image.width, image.height))
 
-    override fun readQRCode(image: ImageData, rect: Rect) = readQRCode(image, listOf(rect))
+    override fun readQRCode(image: ImageData, rect: Rect): String? = readQRCode(image, listOf(rect))
 
     override fun readQRCode(image: ImageData, rectList: Iterable<Rect>): String? {
         return rectList.asSequence()
