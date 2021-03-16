@@ -1,17 +1,14 @@
 package com.github.soranakk.oofqrreader.decoder.zxing
 
-import android.graphics.Bitmap
 import com.github.soranakk.oofqrreader.decoder.QRCodeDecoder
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType
 import com.google.zxing.LuminanceSource
 import com.google.zxing.MultiFormatReader
-import com.google.zxing.RGBLuminanceSource
+import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.zxing.common.GlobalHistogramBinarizer
-import org.opencv.android.Utils
 import org.opencv.core.Mat
-import org.opencv.imgproc.Imgproc
 
 public class ZxingDecoder : QRCodeDecoder {
 
@@ -23,8 +20,7 @@ public class ZxingDecoder : QRCodeDecoder {
     }
 
     override fun decode(grayImage: Mat): String? {
-        val bitmap = grayImage.convertGray2Bitmap()
-        val binaryBitmap = BinaryBitmap(GlobalHistogramBinarizer(bitmap.convertLuminanceSource()))
+        val binaryBitmap = BinaryBitmap(GlobalHistogramBinarizer(grayImage.convertLuminanceSource()))
         return try {
             qrCodeReader.decodeWithState(binaryBitmap).text
         } catch (e: Exception) {
@@ -32,19 +28,16 @@ public class ZxingDecoder : QRCodeDecoder {
         }
     }
 
-    private fun Bitmap.convertLuminanceSource(): LuminanceSource {
-        val pixels = IntArray(width * height)
-        getPixels(pixels, 0, width, 0, 0, width, height)
-        return RGBLuminanceSource(width, height, pixels).also { this.recycle() }
-    }
-
-    private fun Mat.convertGray2Bitmap(): Bitmap {
-        val bitmap = Bitmap.createBitmap(this.width(), this.height(), Bitmap.Config.ARGB_8888)
-        val rgba = Mat()
-        Imgproc.cvtColor(this, rgba, Imgproc.COLOR_GRAY2RGBA)
-        Utils.matToBitmap(rgba, bitmap)
-        rgba.release()
-        this.release()
-        return bitmap
+    private fun Mat.convertLuminanceSource(): LuminanceSource {
+        val grayData = ByteArray((this.total() * this.channels()).toInt())
+        this.get(0, 0, grayData)
+        return PlanarYUVLuminanceSource(grayData,
+                this.width(),
+                this.height(),
+                0,
+                0,
+                this.width(),
+                this.height(),
+                false).also { this.release() }
     }
 }
