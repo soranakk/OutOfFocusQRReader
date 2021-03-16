@@ -18,7 +18,8 @@ public class MultiFilterQRCodeReader(
         readerSettings: ReaderSettings = ReaderSettings()) : QRCodeReader {
 
     public data class ReaderSettings(
-            val useDefaultFilter: Boolean = true
+            val useAllFilter: Boolean = true,
+            val useNonFilter: Boolean = false
     )
 
     private class NonFilter : ImageFilter {
@@ -28,8 +29,8 @@ public class MultiFilterQRCodeReader(
     private val filters = mutableListOf<ImageFilter>()
             .apply { this.addAll(filters) }
             .apply {
-                if (readerSettings.useDefaultFilter) this.addAll(listOf(
-                        NonFilter(),
+                if (readerSettings.useNonFilter) this.add(NonFilter())
+                if (readerSettings.useAllFilter) this.addAll(listOf(
                         GaussianThresholdFilter(),
                         StrongOverexposureFilter(),
                         OverexposureFilter(),

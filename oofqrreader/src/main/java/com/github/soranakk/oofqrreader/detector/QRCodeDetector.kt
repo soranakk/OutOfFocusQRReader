@@ -20,7 +20,7 @@ public class QRCodeDetector(private val settings: DetectionSettings = DetectionS
     public data class DetectionSettings(
             val includeFullScreen: Boolean = false,
             val minSizeRate: Double = 0.01,
-            val maxSizeRate: Double = 1.0
+            val maxSizeRate: Double = 0.95
     )
 
     public fun detectRectWhereQRExists(image: ImageData): List<Rect> {
