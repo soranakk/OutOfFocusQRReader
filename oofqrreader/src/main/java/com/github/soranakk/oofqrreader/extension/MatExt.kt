@@ -56,7 +56,10 @@ private val WHITE = Scalar(255.0, 255.0, 255.0)
 private fun calcAdaptiveThresholdBlockSize(width: Int, height: Int): Int {
     val min = width.coerceAtMost(height)
     return (min / 10).let {
-        if (it % 2 == 0) it + 1
-        else it
+        when {
+            it <= 3 -> 3
+            it % 2 == 0 -> it + 1
+            else -> it
+        }
     }
 }

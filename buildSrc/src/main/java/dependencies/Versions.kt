@@ -3,7 +3,7 @@ package dependencies
 internal object Versions {
 
     internal const val targetSdk = 30
-    internal const val minSdk = 9
+    internal const val minSdk = 21
 
     internal const val androidGradlePlugin = "4.1.2"
 
@@ -14,4 +14,5 @@ internal object Versions {
     }
 
     internal const val zxing = "3.4.1"
+    internal const val mlkit = "16.1.1"
 }

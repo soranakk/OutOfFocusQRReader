@@ -7,9 +7,11 @@ import com.github.soranakk.oofqrreader.filter.ImageFilter
 import com.github.soranakk.oofqrreader.filter.OverexposureFilter
 import com.github.soranakk.oofqrreader.filter.StrongOverexposureFilter
 import com.github.soranakk.oofqrreader.filter.ThresholdOtsuFilter
+import com.github.soranakk.oofqrreader.model.DecodeResult
 import com.github.soranakk.oofqrreader.model.ImageData
 import com.github.soranakk.oofqrreader.util.MatUtil
 import org.opencv.core.Mat
+import org.opencv.core.Point
 import org.opencv.core.Rect
 
 public class MultiFilterQRCodeReader(
@@ -37,22 +39,23 @@ public class MultiFilterQRCodeReader(
                         ThresholdOtsuFilter()))
             }
 
-    override fun readQRCode(image: ImageData): String? = readQRCode(image, Rect(0, 0, image.width, image.height))
+    override fun readQRCode(image: ImageData): DecodeResult? = readQRCode(image, Rect(0, 0, image.width, image.height))
 
-    override fun readQRCode(image: ImageData, rect: Rect): String? = readQRCode(image, listOf(rect))
+    override fun readQRCode(image: ImageData, rect: Rect): DecodeResult? = readQRCode(image, listOf(rect))
 
-    override fun readQRCode(image: ImageData, rectList: Iterable<Rect>): String? {
+    override fun readQRCode(image: ImageData, rectList: Iterable<Rect>): DecodeResult? {
         return rectList.asSequence()
                 .map { rect -> read(image, rect) }
-                .find { !it.isNullOrEmpty() }
+                .find { it != null }
     }
 
-    private fun read(image: ImageData, rect: Rect): String? {
+    private fun read(image: ImageData, rect: Rect): DecodeResult? {
         val targetImage = MatUtil.convertImageDataToGray(image).clipRect(rect)
         return filters.asSequence()
                 .map { filter -> filter.filter(targetImage) }
                 .map { filteredImage -> decoder.decode(filteredImage) }
-                .find { !it.isNullOrEmpty() }
+                .map { it?.copy(detectPoint = it.detectPoint.map { p -> Point(p.x + rect.x, p.y + rect.y) }) }
+                .find { it != null }
                 .also { targetImage.release() }
     }
 }

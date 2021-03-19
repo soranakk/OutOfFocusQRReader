@@ -1,3 +1,5 @@
+include ':decoder-mlkit'
+include ':decoder-opencv'
 include ':decoder-zxing'
 include ':image-converter-android-camera'
 include ':oofqrreader'

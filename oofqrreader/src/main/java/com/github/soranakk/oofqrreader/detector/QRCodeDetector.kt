@@ -13,13 +13,15 @@ import org.opencv.imgproc.Imgproc
 public class QRCodeDetector(private val settings: DetectionSettings = DetectionSettings()) {
 
     private companion object {
+        private const val MIN_WIDTH = 32
+        private const val MIN_HEIGHT = 32
         private const val erodeSizeWidth = 5.0
         private const val erodeSizeHeight = 5.0
     }
 
     public data class DetectionSettings(
             val includeFullScreen: Boolean = false,
-            val minSizeRate: Double = 0.01,
+            val minSizeRate: Double = 0.05,
             val maxSizeRate: Double = 0.95
     )
 
@@ -44,7 +46,9 @@ public class QRCodeDetector(private val settings: DetectionSettings = DetectionS
     }
 
     private fun Rect.isInvalid(imageSize: Size, minSizeRate: Double, maxSizeRate: Double) =
-            this.width < imageSize.minWidth(minSizeRate) ||
+            this.width < MIN_WIDTH ||
+                    this.height < MIN_HEIGHT ||
+                    this.width < imageSize.minWidth(minSizeRate) ||
                     this.height < imageSize.minHeight(minSizeRate) ||
                     this.width > imageSize.maxWidth(maxSizeRate) ||
                     this.height > imageSize.maxHeight(maxSizeRate)

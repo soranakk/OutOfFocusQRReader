@@ -16,4 +16,5 @@ internal object Deps {
     }
 
     internal const val zxing = "com.google.zxing:core:${Versions.zxing}"
+    internal const val mlkit = "com.google.mlkit:barcode-scanning:${Versions.mlkit}"
 }
