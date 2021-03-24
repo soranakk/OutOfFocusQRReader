@@ -13,7 +13,9 @@ internal object Deps {
 
     internal object AndroidX {
         const val coreKtx = "androidx.core:core-ktx:${Versions.AndroidX.core_ktx}"
+        const val cameraXCore = "androidx.camera:camera-core:${Versions.AndroidX.cameraX}"
     }
 
     internal const val zxing = "com.google.zxing:core:${Versions.zxing}"
+    internal const val mlkit = "com.google.mlkit:barcode-scanning:${Versions.mlkit}"
 }

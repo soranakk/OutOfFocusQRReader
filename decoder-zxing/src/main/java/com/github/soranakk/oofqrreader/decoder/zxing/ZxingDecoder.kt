@@ -1,14 +1,17 @@
 package com.github.soranakk.oofqrreader.decoder.zxing
 
 import com.github.soranakk.oofqrreader.decoder.QRCodeDecoder
+import com.github.soranakk.oofqrreader.model.DecodeResult
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType
 import com.google.zxing.LuminanceSource
 import com.google.zxing.MultiFormatReader
 import com.google.zxing.PlanarYUVLuminanceSource
+import com.google.zxing.ResultPoint
 import com.google.zxing.common.GlobalHistogramBinarizer
 import org.opencv.core.Mat
+import org.opencv.core.Point
 
 public class ZxingDecoder : QRCodeDecoder {
 
@@ -19,10 +22,12 @@ public class ZxingDecoder : QRCodeDecoder {
         setHints(hints)
     }
 
-    override fun decode(grayImage: Mat): String? {
+    override fun decode(grayImage: Mat): DecodeResult? {
         val binaryBitmap = BinaryBitmap(GlobalHistogramBinarizer(grayImage.convertLuminanceSource()))
         return try {
-            qrCodeReader.decodeWithState(binaryBitmap).text
+            val result = qrCodeReader.decodeWithState(binaryBitmap)
+            DecodeResult(code = result.text,
+                    detectPoint = result.resultPoints.toPointList())
         } catch (e: Exception) {
             null
         }
@@ -40,4 +45,7 @@ public class ZxingDecoder : QRCodeDecoder {
                 this.height(),
                 false).also { this.release() }
     }
+
+    private fun Array<out ResultPoint>.toPointList(): List<Point> =
+            this.map { Point(it.x.toDouble(), it.y.toDouble()) }.toList()
 }

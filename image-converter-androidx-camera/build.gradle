@@ -1,0 +1,39 @@
+import dependencies.Deps
+import dependencies.Versions
+
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdkVersion Versions.targetSdk
+
+    defaultConfig {
+        minSdkVersion Versions.minSdk
+        targetSdkVersion Versions.targetSdk
+        versionName version
+
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+        freeCompilerArgs += "-Xexplicit-api=strict"
+    }
+}
+
+dependencies {
+    api project(':oofqrreader')
+
+    implementation Deps.AndroidX.cameraXCore
+}
+
+apply from: "${project.rootDir}/publish.gradle"

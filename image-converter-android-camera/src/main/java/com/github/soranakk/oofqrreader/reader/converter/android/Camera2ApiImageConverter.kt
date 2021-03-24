@@ -63,9 +63,9 @@ public class Camera2ApiImageConverter {
 
     private fun Image.toByteArray(): ByteArray {
         val buff = this.planes[0].buffer
-        val size = buff.remaining()
-        return ByteArray(size).apply {
-            buff.get(this, 0, size)
+        buff.rewind()
+        return ByteArray(buff.remaining()).apply {
+            buff.get(this)
         }
     }
 }
