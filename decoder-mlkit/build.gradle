@@ -42,3 +42,5 @@ dependencies {
     implementation Deps.AndroidX.coreKtx
     implementation Deps.mlkit
 }
+
+apply from: "${project.rootDir}/publish.gradle"

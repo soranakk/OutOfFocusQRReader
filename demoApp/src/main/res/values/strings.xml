@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">demoApp</string>
+
+    <string-array name="reader_array">
+        <item>@string/reader_oofreader_zxing</item>
+        <item>@string/reader_oofreader_opencv</item>
+        <item>@string/reader_oofreader_mlkit</item>
+        <item>@string/reader_only_zxing</item>
+        <item>@string/reader_only_mlkit</item>
+    </string-array>
+
+    <string name="reader_oofreader_zxing">ZxingDecoder</string>
+    <string name="reader_oofreader_opencv">OpenCVDecoder</string>
+    <string name="reader_oofreader_mlkit">MLKitDecoder</string>
+    <string name="reader_only_zxing">Only zxing</string>
+    <string name="reader_only_mlkit">Only MLKit</string>
+</resources>

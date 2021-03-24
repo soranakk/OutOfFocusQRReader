@@ -1,17 +1,17 @@
-package com.github.soranakk.oofqrreader.reader.converter.android
+package com.github.soranakk.oofqrreader.reader.converter.androidx
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
-import android.media.Image
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.camera.core.ImageProxy
 import com.github.soranakk.oofqrreader.model.ImageData
 import java.nio.ByteBuffer
 
 @RequiresApi(Build.VERSION_CODES.KITKAT)
-public class Camera2ApiImageConverter {
-    public fun convertImage(image: Image): ImageData {
+public class CameraXApiImageConverter {
+    public fun convertImage(image: ImageProxy): ImageData {
         return when (image.format) {
             ImageFormat.JPEG,
             ImageFormat.HEIC -> convertCompressedDataToImageData(image)
@@ -30,7 +30,7 @@ public class Camera2ApiImageConverter {
         }
     }
 
-    private fun convertCompressedDataToImageData(image: Image): ImageData {
+    private fun convertCompressedDataToImageData(image: ImageProxy): ImageData {
         val compressedData = image.toByteArray()
         val bitmap = BitmapFactory.decodeByteArray(compressedData, 0, compressedData.size).let { bitmap ->
             if (bitmap.config != Bitmap.Config.ARGB_8888) {
@@ -46,22 +46,22 @@ public class Camera2ApiImageConverter {
         return ImageData(argbBuf.array(), ImageData.ImageFormat.ARGB_8888, width, height)
     }
 
-    private fun convertYuvToImageData(image: Image): ImageData {
+    private fun convertYuvToImageData(image: ImageProxy): ImageData {
         val gray = image.toByteArray()
         return ImageData(gray, ImageData.ImageFormat.GRAY, image.width, image.height)
     }
 
-    private fun convertRgbToImageData(image: Image): ImageData {
+    private fun convertRgbToImageData(image: ImageProxy): ImageData {
         val rgb = image.toByteArray()
         return ImageData(rgb, ImageData.ImageFormat.RGB_888, image.width, image.height)
     }
 
-    private fun convertArgbToImageData(image: Image): ImageData {
+    private fun convertArgbToImageData(image: ImageProxy): ImageData {
         val argb = image.toByteArray()
         return ImageData(argb, ImageData.ImageFormat.ARGB_8888, image.width, image.height)
     }
 
-    private fun Image.toByteArray(): ByteArray {
+    private fun ImageProxy.toByteArray(): ByteArray {
         val buff = this.planes[0].buffer
         buff.rewind()
         return ByteArray(buff.remaining()).apply {

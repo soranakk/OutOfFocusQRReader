@@ -11,6 +11,7 @@ internal object Versions {
 
     internal object AndroidX {
         internal const val core_ktx = "1.3.2"
+        internal const val cameraX = "1.0.0-rc03"
     }
 
     internal const val zxing = "3.4.1"

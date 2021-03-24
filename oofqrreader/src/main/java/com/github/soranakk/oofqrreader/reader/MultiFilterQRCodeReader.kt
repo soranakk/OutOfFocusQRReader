@@ -1,6 +1,7 @@
 package com.github.soranakk.oofqrreader.reader
 
 import com.github.soranakk.oofqrreader.decoder.QRCodeDecoder
+import com.github.soranakk.oofqrreader.detector.QRCodeDetector
 import com.github.soranakk.oofqrreader.extension.clipRect
 import com.github.soranakk.oofqrreader.filter.GaussianThresholdFilter
 import com.github.soranakk.oofqrreader.filter.ImageFilter
@@ -8,7 +9,9 @@ import com.github.soranakk.oofqrreader.filter.OverexposureFilter
 import com.github.soranakk.oofqrreader.filter.StrongOverexposureFilter
 import com.github.soranakk.oofqrreader.filter.ThresholdOtsuFilter
 import com.github.soranakk.oofqrreader.model.DecodeResult
+import com.github.soranakk.oofqrreader.model.DetectionSettings
 import com.github.soranakk.oofqrreader.model.ImageData
+import com.github.soranakk.oofqrreader.model.ReaderSettings
 import com.github.soranakk.oofqrreader.util.MatUtil
 import org.opencv.core.Mat
 import org.opencv.core.Point
@@ -16,13 +19,11 @@ import org.opencv.core.Rect
 
 public class MultiFilterQRCodeReader(
         private val decoder: QRCodeDecoder,
+        detectionSettings: DetectionSettings = DetectionSettings(),
         filters: List<ImageFilter> = listOf(),
         readerSettings: ReaderSettings = ReaderSettings()) : QRCodeReader {
 
-    public data class ReaderSettings(
-            val useAllFilter: Boolean = true,
-            val useNonFilter: Boolean = false
-    )
+    private val detector = QRCodeDetector(detectionSettings)
 
     private class NonFilter : ImageFilter {
         override fun filter(image: Mat): Mat = Mat().apply { image.copyTo(this) }
@@ -38,6 +39,11 @@ public class MultiFilterQRCodeReader(
                         OverexposureFilter(),
                         ThresholdOtsuFilter()))
             }
+
+    public fun detectAndRead(image: ImageData): DecodeResult? {
+        val rectList = detector.detectRectWhereQRExists(image)
+        return readQRCode(image, rectList)
+    }
 
     override fun readQRCode(image: ImageData): DecodeResult? = readQRCode(image, Rect(0, 0, image.width, image.height))
 
