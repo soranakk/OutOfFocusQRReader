@@ -41,7 +41,7 @@ dependencies {
     implementation project(':sdk')
 
     // core
-    implementation 'com.github.soranakk:oofqrreader:0.0.1'
+    implementation 'com.github.soranakk.oofqrreader:oofqrreader:1.0.0'
 }
 ```
 
@@ -49,62 +49,177 @@ dependencies {
 
 ## Create ImageData
 
-```kotlin
-val image = ImageData(image_byte_array, format, width, height)
+### Example using Camera2API
+
+```gradle
+dependencies {
+    ...
+
+    implementation 'com.github.soranakk.oofqrreader:image-converter-android-camera:1.0.0'
+}
 ```
 
-## Detect the rect where QR exists
+```kotlin
+val imageConverter = Camera2ApiImageConverter()
+ImageReader.newInstance(width, height, ImageFormat.YUV_420_888, 1)
+    .apply {
+        setOnImageAvailableListener({ reader ->
+            reader?.acquireLatestImage()?.let { image ->
+                val imageData = imageConverter.convertImage(image)
+                ... read QR Code
+                image.close()
+            }
+        }, workerHandler)
+```
+
+### Example using CameraXAPI
+
+```gradle
+dependencies {
+    ...
+
+    implementation 'com.github.soranakk.oofqrreader:image-converter-androidx-camera:1.0.0'
+}
+```
 
 ```kotlin
-val detector = QRCodeDetector()
-val rectList = detector.detectRectWhereQRExists(image)
+val imageConverter = CameraXApiImageConverter()
+val imageAnalysis = ImageAnalysis.Builder()
+  .setTargetRotation(Surface.ROTATION_0)
+  .setTargetResolution(Size(1280, 720))
+  .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+  .build()
+  .also {
+      it.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
+          val imageData = imageConverter.convertImage(image)
+          ... read QR Code
+          image.close()
+      })
+  }
 ```
 
 ## Create QRCodeDecoder
 
-Example using [ZXing](https://github.com/zxing/zxing):
+### Example using [MLKit](https://developers.google.com/ml-kit/vision/barcode-scanning/android):
+
+```gradle
+dependencies {
+    ...
+
+    implementation 'com.github.soranakk.oofqrreader:decoder-mlkit:1.0.0'
+    implementation 'com.google.mlkit:barcode-scanning:16.1.1'
+}
+```
 
 ```kotlin
-class ZxingDecoder : QRCodeDecoder {
-    private val qrCodeReader = MultiFormatReader().apply {
-        val hints = hashMapOf(
-                Pair(DecodeHintType.TRY_HARDER, false),
-                Pair(DecodeHintType.POSSIBLE_FORMATS, listOf(BarcodeFormat.QR_CODE)))
-        setHints(hints)
-    }
+val mlKitDecoder = MLKitDecoder()
+```
 
-    override fun decode(grayImage: Mat): String? {
-        val bitmap = grayImage.convertGray2Bitmap()
-        val binaryBitmap = BinaryBitmap(GlobalHistogramBinarizer(convertLuminanceSource(bitmap)))
-        return try {
-            qrCodeReader.decodeWithState(binaryBitmap).text
-        } catch (e: Exception) {
-            null
-        }
-    }
+### Example using [ZXing](https://github.com/zxing/zxing):
 
-    private fun convertLuminanceSource(bitmap: Bitmap): LuminanceSource {
-        val pixels = IntArray(bitmap.width * bitmap.height)
-        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
-        return RGBLuminanceSource(bitmap.width, bitmap.height, pixels)
-    }
+```gradle
+dependencies {
+    ...
 
-    private fun Mat.convertGray2Bitmap(): Bitmap {
-        val bitmap = Bitmap.createBitmap(this.width(), this.height(), Bitmap.Config.ARGB_8888)
-        val rgba = Mat()
-        Imgproc.cvtColor(this, rgba, Imgproc.COLOR_GRAY2RGBA)
-        Utils.matToBitmap(rgba, bitmap)
-        rgba.release()
-        this.release()
-        return bitmap
-    }
+    implementation 'com.github.soranakk.oofqrreader:decoder-zxing:1.0.0'
+    implementation "com.google.zxing:core:3.4.1"
 }
+```
+
+```kotlin
 val zxingDecoder = ZxingDecoder()
+```
+
+If your app require Android minSdkVersion less than 24,
+see https://github.com/zxing/zxing/issues/1170 and demoApp's build.gradle
+
+### Example using [OpenCV](https://opencv.org/):
+
+```gradle
+dependencies {
+    ...
+
+    implementation 'com.github.soranakk.oofqrreader:decoder-opencv:1.0.0'
+}
+```
+
+```kotlin
+val openCVDecoder = OpenCVDecoder()
 ```
 
 ## Read QR code
 
 ```kotlin
-val qrReader = MultiFilterQRCodeReader(zxingDecoder)
-val result = qrReader.readQRCode(image, rectList)
+val qrReader = MultiFilterQRCodeReader(someDecoder)
+val result = qrReader.detectAndRead(image)
 ```
+
+See demoApp for more info.
+
+# Appendix
+
+## How to improve accuracy
+
+### Estimate the area where a QR code exist
+
+Estimate the area where a QR code exists by using the large contrast between the QR code and the background.
+
+1. Make the input image grayscale
+2. Binarize with Otsu's method
+3. Use `Imgproc.erode` to thicken the dots in a QR code and turn them into black squares.
+4. Use `Imgproc.findContours` to get the black square area
+
+### Adjust the image
+
+Further improve the accuracy by processing the image of the estimated area using various Image Filters.
+The features of each ImageFilter implemented are as follows.
+
+#### GaussianThresholdFilter
+
+Binarize with a weighted average using Gaussian as a threshold at a fixed block size.
+
+Input image
+
+![image_1.png](images/gaussian/image_1.png)
+
+Estimate the area where a QR code exists
+
+![image_2.png](images/gaussian/image_2.png)
+
+After applying the image filter
+
+![image_3.png](images/gaussian/image_3.png)
+
+#### ThresholdOtsuFilter
+
+Binarize Otsu's method.
+
+Input image
+
+![image_1.png](images/otsu/image_1.png)
+
+Estimate the area where a QR code exists
+
+![image_2.png](images/otsu/image_2.png)
+
+After applying the image filter
+
+![image_3.png](images/otsu/image_3.png)
+
+#### OverexposureFilter
+
+A filter for reading overexposed QR codes by setting a threshold so that even almost white areas become black.
+Most input images output a black image, but under certain circumstances this filter works well.
+For example, displaying a QR code on a smartphone will result in overexposure due to the strong backlight of the smartphone.
+
+Input image
+
+![image_1.png](images/overexposure/image_1.png)
+
+Estimate the area where a QR code exists
+
+![image_2.png](images/overexposure/image_2.png)
+
+After applying the image filter
+
+![image_3.png](images/overexposure/image_3.png)
